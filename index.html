@@ -50,44 +50,8 @@
 </head>
 <body>
   <div class="audio-player">
-    <?php
-      $audio_url = isset($_GET['audio_url']) ? $_GET['audio_url'] : '';
-      echo '<audio id="audio" src="' . $audio_url . '"></audio>';
-    ?>
-    <button id="playPause" class="play" onclick="
-      const audio = document.getElementById('audio');
-      const playPauseButton = document.getElementById('playPause');
-      const progressBar = document.getElementById('progress');
-      const progressBarContainer = document.getElementById('progressBar');
-
-      function togglePlayPause() {
-        if (audio.paused) {
-          audio.play();
-          playPauseButton.classList.remove('play');
-          playPauseButton.classList.add('pause');
-        } else {
-          audio.pause();
-          playPauseButton.classList.remove('pause');
-          playPauseButton.classList.add('play');
-        }
-      }
-
-      audio.addEventListener('timeupdate', function() {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration;
-        const progressWidth = (currentTime / duration) * 100;
-        progressBar.style.width = progressWidth + '%';
-      });
-
-      progressBarContainer.addEventListener('click', function(event) {
-        const boundingRect = progressBarContainer.getBoundingClientRect();
-        const offsetX = event.clientX - boundingRect.left;
-        const progressBarWidth = progressBarContainer.clientWidth;
-        const progressPercentage = offsetX / progressBarWidth;
-        const newTime = progressPercentage * audio.duration;
-        audio.currentTime = newTime;
-      });
-    ">
+    <audio id="audio"></audio>
+    <button id="playPause" class="play" onclick="togglePlayPause()">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
         <path d="M8 5v14l11-7z"/>
       </svg>
@@ -96,5 +60,36 @@
       <div id="progress" class="progress"></div>
     </div>
   </div>
+
+  <script>
+    // Function to toggle play/pause
+    function togglePlayPause() {
+      const audio = document.getElementById('audio');
+      const playPauseButton = document.getElementById('playPause');
+      if (audio.paused) {
+        audio.play();
+        playPauseButton.classList.remove('play');
+        playPauseButton.classList.add('pause');
+      } else {
+        audio.pause();
+        playPauseButton.classList.remove('pause');
+        playPauseButton.classList.add('play');
+      }
+    }
+
+    // Function to update audio source based on query parameter
+    function updateAudioSource() {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const audioUrl = urlParams.get('audio_url');
+      if (audioUrl) {
+        const audio = document.getElementById('audio');
+        audio.src = audioUrl;
+      }
+    }
+
+    // Call the function when the page loads
+    updateAudioSource();
+  </script>
 </body>
 </html>
